@@ -1,0 +1,15 @@
+{
+	"token": "Put your Discord API token here",
+	"prefix": "+",
+	"ownerID":"Put your ID here (right-click, copy ID)",
+	"moTZ":"America/New_York",
+	"dbfile":"./chatlogfilename.sqlite",
+	"tablePartyhard":"Party channel logs table name",
+	"tableMagisterium":"General chat channel logs table name",
+	"magisterium":"General hangout channel ID (right-click, copy ID)",
+	"announce":"Announcement channel ID (right-click, copy ID)",
+	"partyhard":"Special event channel ID (right-click, copy ID)",
+	"soporati":"Party guest role ID",
+	"patrons":"Patreon patron role ID",
+	"magisters":"The usual fuckabouts role ID"
+}
