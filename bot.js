@@ -36,22 +36,22 @@ client.on('ready', () => {
 	let endTime = new Date(minute5.getTime() + (fm));
 	
 	var i = schedule.scheduleJob(hourThree, function() {
-		client.channels.get(config.partyhard).sendMessage("Three hours remain in this month's Rhapsody Chat!");
+		client.channels.get(config.partyhard).sendMessage("Three hours remain in the current " + config.partyName + "!");
 	})
 	var j = schedule.scheduleJob(hourTwo, function() {
-		client.channels.get(config.partyhard).sendMessage("Two hours remain in this month's Rhapsody Chat!");
+		client.channels.get(config.partyhard).sendMessage("Two hours remain in the current " + config.partyName + "!");
 	})
 	var k = schedule.scheduleJob(hourOne, function() {
-		client.channels.get(config.partyhard).sendMessage("One hour remains in this month's Rhapsody Chat!");
+		client.channels.get(config.partyhard).sendMessage("One hour remains in the current " + config.partyName + "!");
 	})
 	var l = schedule.scheduleJob(minute30, function() {
-		client.channels.get(config.partyhard).sendMessage("Thirty minutes remain in this month's Rhapsody Chat!");
+		client.channels.get(config.partyhard).sendMessage("Thirty minutes remain in the current " + config.partyName + "!");
 	})
 	var m = schedule.scheduleJob(minute5, function() {
-		client.channels.get(config.partyhard).sendMessage("Five minutes remain in this month's Rhapsody Chat!");
+		client.channels.get(config.partyhard).sendMessage("Five minutes remain in the current " + config.partyName + "!");
 	})
 	var n = schedule.scheduleJob(endTime, function() {
-		client.channels.get(config.partyhard).sendMessage("The party is over! Thanks for joining us, and please come back next month!");
+		client.channels.get(config.partyhard).sendMessage("The party is over! Thanks for joining us, and please come back next time!");
 	})
 });
 
