@@ -43,3 +43,9 @@ Note that if you change anything in `config.json` or `bot.js`, like the next par
 
 ## Stupid Problems
 * I haven't figured out how to bump the date into config.json, so the party date (and scheduling announcements) has to be done directly in bot.js. I'll care later.
+
+## Removing Stuff
+If you're not interested in using certain functions, I've made them easy to remove from bot.js.
+* Party announcements: remove the lines between '//Begin scheduling system' and '//End scheduling system'
+* Patreon role for parties: remove the lines between //Begin/End add patrons and those between //Begin/End remove patrons
+* CAH game announcements: remove the lines between //Begin/End CAH

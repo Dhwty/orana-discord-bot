@@ -1,7 +1,7 @@
 const Discord = require("discord.js");
 const client = new Discord.Client();
 const sql = require('sqlite');
-const moment = require('moment-timezone');
+const momentTZ = require('moment-timezone');
 const schedule = require('node-schedule');
 const config = require('./config.json');
 
@@ -14,9 +14,14 @@ client.on('error', (e) => console.error(e));
 client.on('warn', (e) => console.warn(e));
 //client.on('debug', (e) => console.info(e));
 
+let partyTime = new Date(2017, 3, 29, 11, 0, 0);
+
 client.on('ready', () => {
-	loginTime = new Date();
-	console.log(moment.tz(loginTime, config.moTZ).toString() + `: Logged in as ${client.user.username}!`);
+	console.log(momentTZ.tz(new Date(), config.moTZ).toString() + `: Logged in as ${client.user.username}!`);
+	
+	console.log("Next party @ " + momentTZ.tz(partyTime, config.moTZ).toString());
+	client.channels.get(config.announce).setTopic('Next party @ '+ momentTZ.tz(partyTime, config.moTZ).toString());
+	
 	//Begin scheduling system
 	let day = (24*60*60*1000);
 	let hour = (60*60*1000);
@@ -25,10 +30,7 @@ client.on('ready', () => {
 	let tm = (10*60*1000);
 	let fm = (5*60*1000);
 	
-	let startTime = new Date(2017, 3, 29, 11, 0, 0);
-	console.log("Next party @ " + startTime);
-	client.channels.get(config.announce).setTopic('Next party @ '+ moment.tz(startTime, config.moTZ).toString());
-	let hourThree = new Date(startTime.getTime() + hour);
+	let hourThree = new Date(partyTime.getTime() + hour);
 	let hourTwo = new Date(hourThree.getTime() + hour);
 	let hourOne = new Date(hourTwo.getTime() + hour);
 	let minute30 = new Date(hourOne.getTime() + hh);
@@ -53,6 +55,7 @@ client.on('ready', () => {
 	var n = schedule.scheduleJob(endTime, function() {
 		client.channels.get(config.partyhard).sendMessage("The party is over! Thanks for joining us, and please come back next time!");
 	})
+	//End scheduling system
 });
 
 client.on("guildMemberAdd", (member) => {
@@ -63,7 +66,7 @@ client.on("guildMemberAdd", (member) => {
 client.on("message", (message) => {
 	//Begin logging
 	if (message.channel.id === config.partyhard){
-		var mtime = moment.tz(new Date(message.createdAt), config.moTZ).toString();
+		var mtime = momentTZ.tz(new Date(message.createdAt), config.moTZ).toString();
 		sql.get(`SELECT * FROM ` + config.tablePartyhard + ` WHERE mid ='${message.id}'`).then(row => {
 			if(!row){
 				sql.run('INSERT INTO ' + config.tablePartyhard + ' (mid, userId, name, msg, time) VALUES (?, ?, ?, ?, ?)', [message.id, message.author.id, message.author.username, message.content,mtime]);
@@ -76,7 +79,7 @@ client.on("message", (message) => {
 		});
 	}
 	if (message.channel.id === config.magisterium){
-		var mtime = moment.tz(new Date(message.createdAt), config.moTZ).toString();
+		var mtime = momentTZ.tz(new Date(message.createdAt), config.moTZ).toString();
 		sql.get(`SELECT * FROM ` + config.tableMagisterium + ` WHERE mid ='${message.id}'`).then(row => {
 			if(!row){
 				sql.run('INSERT INTO ' + config.tableMagisterium + ' (mid, userId, name, msg, time) VALUES (?, ?, ?, ?, ?)', [message.id, message.author.id, message.author.username, message.content,mtime]);
@@ -91,20 +94,24 @@ client.on("message", (message) => {
 	//Begin commands
 	if (message.author.bot) return;
 	if (!message.content.startsWith(config.prefix)) return;
+	//Begin CAH
 	if (message.content.startsWith(config.prefix + "cah")) {
 		let args = message.content.split(" ").slice(1);
 		let url = args[0];
 		let pwd = args[1];
 		client.channels.get(config.announce).sendMessage(`CAH game at :link: <${url}>!\nThe password is: ${pwd}`);
 	} else
+	//End CAH
+	//Begin +time (THIS DOES NOT WORK YET)
 	if(message.content.startsWith(config.prefix + "time")){
-		message.channel.sendMessage(startTime.fromNow(true) + ' remaining');
+		message.channel.sendMessage(partyTime.fromNow(true) + ' remaining');
 	}
+	//End +time
 	//Begin owner-only commands
 	if(message.author.id !== config.ownerID) message.channel.sendMessage("Excuse me?");
 	if (message.content.startsWith(config.prefix + "shutdown")) {
 		message.channel.sendMessage("*goes to bed.*\nPlease restart the service.");
-		console.log('----- ' + moment.tz(new Date(), config.moTZ).toString() + ': Bot shutdown via command. -----');
+		console.log('----- ' + momentTZ.tz(new Date(), config.moTZ).toString() + ': Bot shutdown via command. -----');
 		client.destroy((err) => {
 			console.log(err);
 		});
@@ -116,14 +123,16 @@ client.on("message", (message) => {
 				SEND_MESSAGES: false,
 				READ_MESSAGES: false
 			})
-			.then(() => console.log(moment.tz(new Date(), config.moTZ).toString() + ': Guests booted!'))
+			.then(() => console.log(momentTZ.tz(new Date(), config.moTZ).toString() + ': Guests booted!'))
 			.catch(console.error);
+			//Begin remove patrons
 			message.channel.overwritePermissions(config.patrons, {
 				SEND_MESSAGES: false,
 				READ_MESSAGES: false
 			})
-			.then(() => console.log(moment.tz(new Date(), config.moTZ).toString() + ': Patrons booted!'))
+			.then(() => console.log(momentTZ.tz(new Date(), config.moTZ).toString() + ': Patrons booted!'))
 			.catch(console.error);
+			//End remove patrons
 			message.channel.sendMessage("Party over. Guests cleared.");
 		}
 		if (message.content.startsWith(config.prefix + "open")) {
@@ -131,19 +140,21 @@ client.on("message", (message) => {
 				SEND_MESSAGES: true,
 				READ_MESSAGES: true
 			})
-			.then(() => console.log(moment.tz(new Date(), config.moTZ).toString() + ': Guests invited!'))
+			.then(() => console.log(momentTZ.tz(new Date(), config.moTZ).toString() + ': Guests invited!'))
 			.catch(console.error);
+			//Begin add patrons
 			message.channel.overwritePermissions(config.patrons, {
 				SEND_MESSAGES: true,
 				READ_MESSAGES: true
 			})
-			.then(() => console.log(moment.tz(new Date(), config.moTZ).toString() + ': Patrons invited!'))
+			.then(() => console.log(momentTZ.tz(new Date(), config.moTZ).toString() + ': Patrons invited!'))
 			.catch(console.error);
+			//End add patrons
 			message.channel.sendMessage("Party started. Channel open to guests.");
 		}
 	}else message.channel.sendMessage("This command can't be used in private messages.");
 });
 
 client.on('disconnect', function(erMsg, code) {
-    console.log('----- ' + moment.tz(new Date(), config.moTZ).toString() + ':  Bot disconnected from Discord with code', code, '-----');
+    console.log('----- ' + momentTZ.tz(new Date(), config.moTZ).toString() + ':  Bot disconnected from Discord with code', code, '-----');
 });
