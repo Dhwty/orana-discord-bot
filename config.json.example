@@ -9,7 +9,7 @@
 	"magisterium":"General hangout channel ID (right-click, copy ID)",
 	"announce":"Announcement channel ID (right-click, copy ID)",
 	"partyhard":"Special event channel ID (right-click, copy ID)",
-	"soporati":"Party guest role ID",
+	"guests":"Party guest role ID",
 	"patrons":"Patreon patron role ID",
 	"magisters":"The usual fuckabouts role ID",
 	"partyName":"Give the party a title",

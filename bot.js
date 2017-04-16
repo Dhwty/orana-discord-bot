@@ -57,7 +57,7 @@ client.on('ready', () => {
 
 client.on("guildMemberAdd", (member) => {
   console.log(`New User "${member.user.username}" has joined "${member.guild.name}"` );
-  member.addRole(config.soporati).catch(console.error);
+  member.addRole(config.guests).catch(console.error);
 });
 
 client.on("message", (message) => {
@@ -95,8 +95,11 @@ client.on("message", (message) => {
 		let args = message.content.split(" ").slice(1);
 		let url = args[0];
 		let pwd = args[1];
-		client.channels.get(config.announce).sendMessage(`Cards Against Rhapsody game at :link: <${url}>!\nThe password is: ${pwd}`);
+		client.channels.get(config.announce).sendMessage(`CAH game at :link: <${url}>!\nThe password is: ${pwd}`);
 	} else
+	if(message.content.startsWith(config.prefix + "time")){
+		message.channel.sendMessage(startTime.fromNow(true) + ' remaining');
+	}
 	//Begin owner-only commands
 	if(message.author.id !== config.ownerID) message.channel.sendMessage("Excuse me?");
 	if (message.content.startsWith(config.prefix + "shutdown")) {
@@ -109,11 +112,11 @@ client.on("message", (message) => {
 	//Public channel & Owner only
 	if(message.channel.type !== 'dm'){
 		if (message.content.startsWith(config.prefix + "closed")) {
-			message.channel.overwritePermissions(config.soporati, {
+			message.channel.overwritePermissions(config.guests, {
 				SEND_MESSAGES: false,
 				READ_MESSAGES: false
 			})
-			.then(() => console.log(moment.tz(new Date(), config.moTZ).toString() + ': Soporati booted!'))
+			.then(() => console.log(moment.tz(new Date(), config.moTZ).toString() + ': Guests booted!'))
 			.catch(console.error);
 			message.channel.overwritePermissions(config.patrons, {
 				SEND_MESSAGES: false,
@@ -124,11 +127,11 @@ client.on("message", (message) => {
 			message.channel.sendMessage("Party over. Guests cleared.");
 		}
 		if (message.content.startsWith(config.prefix + "open")) {
-			message.channel.overwritePermissions(config.soporati, {
+			message.channel.overwritePermissions(config.guests, {
 				SEND_MESSAGES: true,
 				READ_MESSAGES: true
 			})
-			.then(() => console.log(moment.tz(new Date(), config.moTZ).toString() + ': Soporati invited!'))
+			.then(() => console.log(moment.tz(new Date(), config.moTZ).toString() + ': Guests invited!'))
 			.catch(console.error);
 			message.channel.overwritePermissions(config.patrons, {
 				SEND_MESSAGES: true,
